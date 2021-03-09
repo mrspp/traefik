@@ -1,5 +1,5 @@
 # Start from the latest golang base image
-FROM golang:1.12-alpine
+FROM golang:latest
 
 
 # Set the Current Working Directory inside the container
