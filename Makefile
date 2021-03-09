@@ -1,11 +1,15 @@
 # build docker image
-sudo docker build -t hello .
+docker-build:
+	sudo docker build -t hello .
 
 # run docker image
-sudo docker run -d -p 9001:9001 hello
+docker-run:
+	sudo docker run -d -p 9000:9000 hello
 
 # start traefik
-sudo docker-compose up -d reverse-proxy
+docker-up-proxy:
+	sudo docker-compose up -d reverse-proxy
 
 # make instance for hello service
-sudo docker-compose up -d --scale hello=3
+docker-up-hello:
+	sudo docker-compose up -d --scale hello=3
