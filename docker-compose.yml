@@ -21,7 +21,7 @@ services:
       - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
   hello:
     ports: 
-      - "7000-8000:9000"
+      - "7000-8000:9001"
     image: hello
     labels:
       - "traefik.enable=true"

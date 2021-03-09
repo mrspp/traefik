@@ -2,7 +2,7 @@
 sudo docker build -t hello .
 
 # run docker image
-sudo docker run -d -p 9000:9000 hello
+sudo docker run -d -p 9001:9001 hello
 
 # start traefik
 sudo docker-compose up -d reverse-proxy
