@@ -24,7 +24,7 @@ func main() {
 	client := hello.NewHelloServiceClient(conn)
 
 	for {
-		res, err := client.HelloBack(context.Background(), &hello.HelloReq{})
+		res, err := client.HelloBack(context.Background(), &hello.HelloReq{Name: " Josh"})
 		if err != nil {
 			panic(err)
 		}

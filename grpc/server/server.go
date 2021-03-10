@@ -2,16 +2,21 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	hello "grpc-load-balancing/services/proto"
 	"log"
 	"net"
 	"os"
+	"time"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/keepalive"
 )
 
-type server struct{}
+type server struct {
+	address string
+}
 
 func (s *server) SayHello(ctx context.Context, request *hello.HelloReq) (*hello.HelloRes, error) {
 	name := request.Name
@@ -25,7 +30,7 @@ func (s *server) HelloBack(ctx context.Context, req *hello.HelloReq) (*hello.Hel
 	name := req.Name
 	response := &hello.HelloBackRes{
 		Mes: "Hi" + name,
-		Adj: "Are you ok?",
+		Adj: "From" + s.address,
 	}
 	return response, nil
 }
@@ -33,6 +38,23 @@ func (s *server) HelloBack(ctx context.Context, req *hello.HelloReq) (*hello.Hel
 func main() {
 
 	address := os.Getenv("ADDRESS")
+
+	if address == "" {
+		panic(errors.New("ADDRESS enviroment variable is required"))
+	}
+
+	opts := []grpc.ServerOption{
+		grpc.KeepaliveParams(keepalive.ServerParameters{
+			MaxConnectionAge: 10 * time.Second,
+		}),
+	}
+
+	service := &server{address: address}
+
+	grpcServer := grpc.NewServer(opts...)
+
+	hello.RegisterHelloServiceServer(grpcServer, service)
+
 	lis, err := net.Listen("tcp", address)
 
 	if err != nil {
@@ -40,7 +62,7 @@ func main() {
 	}
 	fmt.Printf("Server is listening on %v", address)
 
-	s := grpc.NewServer()
-	hello.RegisterHelloServiceServer(s, &server{})
-	s.Serve(lis)
+	// s := grpc.NewServer()
+	// hello.RegisterHelloServiceServer(s, &server{})
+	grpcServer.Serve(lis)
 }
